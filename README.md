@@ -13,6 +13,10 @@ Set the API key in a `gradle.properties` file at the root of the project. This f
 
 ```properties
 GEO_API_KEY=<YOUR_API_KEY>
+SILENTIUM_SERVICE_ACCOUNT_EMAIL=<PUBLISH_KEY>
+RELEASE_TRACK=<YOUR_PREFERRED_RELEASE_TRACK>
+VERSION_CODE=<VERSION_CODE>
+VERSION_NAME=<VERSION_NAME>
 ```
 
 The [`app`](./app) module's [build.gradle](./app/build.gradle) file has this set to Build fields making the Key available in the code:
