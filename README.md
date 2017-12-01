@@ -94,7 +94,7 @@ You can deploy this project to any platform that allows hosting of apk files. Th
 
 ## Contributing
 
-Please read CONTRIBUTING.md for details on code of conduct, and the process for submitting pull requests.
+Please read [CONTRIBUTING](./CONTRIBUTING.md) for details on contribution and [CODE_OF_CONDUCT](./CODE_OF_CONDUCT.MD) for details on code of conduct, and the process for submitting pull requests read [PULL_REQUEST_TEMPLATE](./PULL_REQUEST_TEMPLATE.md)
 
 ## Versioning
 
@@ -102,7 +102,7 @@ SemVer is used for versioning. For the versions available, see the tags on this 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
 ### Screenshots
 
