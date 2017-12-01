@@ -2,8 +2,17 @@ apply plugin: "com.android.application"
 apply plugin: 'kotlin-android'
 apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
+apply plugin: "com.github.triplet.play"
 
 android {
+    playAccountConfigs {
+        defaultAccountConfig {
+            serviceAccountEmail = rootProject.ext.serviceAccountEmail
+            // pk12File = rootProject.ext.pk12KeyFile
+            jsonFile = rootProject.ext.pJsonKeyFile
+        }
+    }
+
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
@@ -16,6 +25,15 @@ android {
 
         multiDexEnabled = true
         manifestPlaceholders = [geoApiKey: GEO_API_KEY]
+        playAccountConfig = playAccountConfigs.defaultAccountConfig
+    }
+
+    // configurations for deployment
+    play {
+        track = rootProject.ext.releaseTrack
+        untrackOld = true // will untrack "alpha" while upload to "beta"
+        errorOnSizeLimit = false
+        uploadImages = true
     }
 
     /**

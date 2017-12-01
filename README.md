@@ -1,5 +1,7 @@
 # Silentium
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d50fb64b11a74899ae6c8285f96e1ed8)](https://www.codacy.com/app/BrianLusina/silentium?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=BrianLusina/silentium&amp;utm_campaign=Badge_Grade)
+
 Silentium means silent in Latin, this is a toy app that allows your device to go silent on certain pre-define regions that you select. This utilizes [GeoFences](https://developer.android.com/training/location/geofencing.html) API from Google.
 
 ## Getting Started
