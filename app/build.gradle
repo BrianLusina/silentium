@@ -1,32 +1,121 @@
-apply plugin: 'com.android.application'
+apply plugin: "com.android.application"
+apply plugin: 'kotlin-android'
+apply plugin: "kotlin-android-extensions"
+apply plugin: "kotlin-kapt"
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
-        applicationId "com.example.android.shushme"
-        minSdkVersion 16
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        applicationId "com.silentium"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled = true
+        manifestPlaceholders = [geoApiKey: GEO_API_KEY]
     }
+
+    /**
+     * The aapt tool may inflate PNG files that have already been compressed.
+     * To prevent this, you can use the cruncherEnabled flag in Gradle to disable this
+     * process for PNG files:
+     * */
+    aaptOptions {
+        cruncherEnabled = false
+    }
+
+    signingConfigs {
+        release {
+            keyAlias rootProject.ext.keystoreProperties["keyAlias"]
+            keyPassword rootProject.ext.keystoreProperties["keyPassword"]
+            storeFile rootProject.file(rootProject.ext.keystoreProperties["storeFile"])
+            storePassword rootProject.ext.keystoreProperties["storePassword"]
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            debuggable false
+            zipAlignEnabled true
+            signingConfig signingConfigs.release
+            resValue "string", "app_name", "Silentium"
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
+
+        debug {
+            debuggable true
+            minifyEnabled false
+            testCoverageEnabled true
+            resValue "string", "app_name", "Silentium-dev"
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+
+    buildTypes.each {
+        it.buildConfigField "String", "GEO_API_KEY", GEO_API_KEY
+        it.buildConfigField "String", "GEO_API_KEY", GEO_API_KEY
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs += "src/main/kotlin"
+            res.srcDirs = [
+                    "src/main/res/layouts/feature_main",
+                    "src/main/res/layouts/common",
+                    "src/main/res/layouts",
+                    "src/main/res",
+            ]
+        }
+
+        androidTest {
+            java.srcDirs += "src/androidTest/kotlin"
+        }
+
+        test {
+            java.srcDirs += "src/test/kotlin"
+        }
+    }
+
+    packagingOptions {
+        exclude "META-INF/DEPENDENCIES.txt"
+        exclude "META-INF/LICENSE.txt"
+        exclude "META-INF/NOTICE.txt"
+        exclude "META-INF/NOTICE"
+        exclude "META-INF/LICENSE"
+        exclude "META-INF/DEPENDENCIES"
+        exclude "META-INF/notice.txt"
+        exclude "META-INF/license.txt"
+        exclude "META-INF/dependencies.txt"
+        exclude "META-INF/LGPL2.1"
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:recyclerview-v7:$supportLibVersion"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // play services
+    implementation "com.google.android.gms:play-services-places:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-location:$playServicesVersion"
+
+    implementation "org.jetbrains.anko:anko-commons:$ankoVersion"
+
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+
+    // tests
+    testImplementation "junit:junit:$jUnitVerion"
+    androidTestImplementation("com.android.support.test.espresso:espresso-core:$espressoVersion", {
+        exclude group: "com.android.support", module: "support-annotations"
     })
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:recyclerview-v7:25.0.1'
-    compile 'com.google.android.gms:play-services-places:9.8.0'
-    compile 'com.google.android.gms:play-services-location:9.8.0'
-    testCompile 'junit:junit:4.12'
 }

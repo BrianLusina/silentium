@@ -1,4 +1,4 @@
-package com.example.android.shushme.provider;
+package com.silentium.provider;
 
 /*
 * Copyright (C) 2017 The Android Open Source Project
@@ -20,7 +20,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.android.shushme.provider.PlaceContract.PlaceEntry;
+import com.silentium.provider.PlaceContract.PlaceEntry;
 
 public class PlaceDbHelper extends SQLiteOpenHelper {
 

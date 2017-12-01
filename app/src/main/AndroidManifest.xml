@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.silentium">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,9 +14,9 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="insert-your-api-key-here" />
+            android:value="${geoApiKey}" />
 
-        <activity android:name="com.example.android.shushme.MainActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -21,14 +24,11 @@
         </activity>
 
         <provider
-            android:name="com.example.android.shushme.provider.PlaceContentProvider"
-            android:authorities="com.example.android.shushme"
+            android:name=".provider.PlaceContentProvider"
+            android:authorities="com.silentium"
             android:exported="false"/>
 
         <receiver android:name=".GeofenceBroadcastReceiver" />
 
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>

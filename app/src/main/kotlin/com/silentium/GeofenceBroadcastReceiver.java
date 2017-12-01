@@ -1,4 +1,4 @@
-package com.example.android.shushme;
+package com.silentium;
 
 /*
 * Copyright (C) 2017 The Android Open Source Project
@@ -16,9 +16,18 @@ package com.example.android.shushme;
 * limitations under the License.
 */
 
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingEvent;
+
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.media.AudioManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {

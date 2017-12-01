@@ -1,4 +1,4 @@
-package com.example.android.shushme.provider;
+package com.silentium.provider;
 
 /*
 * Copyright (C) 2017 The Android Open Source Project
@@ -26,7 +26,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import static com.example.android.shushme.provider.PlaceContract.PlaceEntry;
+import static com.silentium.provider.PlaceContract.PlaceEntry;
 
 
 public class PlaceContentProvider extends ContentProvider {
