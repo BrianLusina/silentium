@@ -1,23 +1,79 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
+    ext.kotlin_version = '1.2.0'
     repositories {
         jcenter()
+        google()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+        google()
+        mavenCentral()
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+
+/**
+ * Gets keystore properties file from r*/
+def getKeyStorePropertiesFile = { ->
+    try{
+        return rootProject.file("keystores/keystore.properties")
+    }catch (Exception ignored){
+        return new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/keystore.properties")
+    }
+}
+
+ext {
+    compileSdkVersion = 26
+    buildToolsVersion = "26.0.2"
+    supportLibVersion = "27.0.2"
+    minSdkVersion = 16
+    targetSdkVersion = 26
+    versionCode = 1
+    versionName = "1.0.0"
+
+    // play services
+    playServicesVersion = "11.6.2"
+
+    // dagger
+    daggerVersion = "2.13"
+
+    // anko version
+    ankoVersion = "0.10.3"
+
+    espressoVersion = "2.2.2"
+    jUnitVerion = "4.12"
+
+    // keystore
+    keystorePropertiesFile = getKeyStorePropertiesFile()
+    keystoreProperties = new Properties()
+    keystoreProperties.load(new FileInputStream(ext.keystorePropertiesFile))
+
+    /**
+     * Set this to true to create two separate APKs instead of one:
+     *   - An APK that only works on ARM devices
+     *   - An APK that only works on x86 devices
+     * The advantage is the size of the APK is reduced by about 4MB.
+     * Upload all the APKs to the Play Store and people will download
+     * the correct one based on the CPU architecture of their device.
+     */
+    enableSeparateBuildPerCPUArchitecture = true
+
+    // If true, also generate a universal APK
+    enableUniversalApk = true
+
+    // ABI codes
+    abiCodes = ["armeabi": 3, "armeabi-v7a": 4, "arm64-v8a": 5, "mips": 6, "x86": 7, "x86_64": 8]
 }
