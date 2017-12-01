@@ -94,7 +94,7 @@ You can deploy this project to any platform that allows hosting of apk files. Th
 
 ## Contributing
 
-Please read [CONTRIBUTING](./CONTRIBUTING.md) for details on contribution and [CODE_OF_CONDUCT](./CODE_OF_CONDUCT.MD) for details on code of conduct, and the process for submitting pull requests read [PULL_REQUEST_TEMPLATE](./PULL_REQUEST_TEMPLATE.md)
+Please read [CONTRIBUTING](./CONTRIBUTING.md) for details on contribution and [CODE_OF_CONDUCT](./CODE_OF_CONDUCT.md) for details on code of conduct, and the process for submitting pull requests read [PULL_REQUEST_TEMPLATE](./PULL_REQUEST_TEMPLATE.md)
 
 ## Versioning
 
