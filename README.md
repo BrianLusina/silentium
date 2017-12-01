@@ -62,7 +62,7 @@ You will need the latest version of [Android Studio](https://developer.android.c
 
 A good working knowledge of [Kotlin](https://kotlinlang.org/) as this project is written in the Kotlin language and also a good understanding of [Dependency Inject](https://en.wikipedia.org/wiki/Dependency_injection)/Inversion of Control(IoC)
 
-## Running Test
+## Running Tests
  
  Tests have been written around Presenter Logic and will mostly run on the JVM as this is faster than running tests on an Emulator or a connected device. This is enabled due to the structure around [MVP](https://antonioleiva.com/mvp-android) to separate business logic from the UI/View.
  
@@ -87,10 +87,11 @@ You can deploy this project to any platform that allows hosting of apk files. Th
 
 ## Built With
 
-+ [Kotlin Programming Language](https://kotlinlang.org)
-+ [Dagger](https://google.github.io/dagger/)
-+ [Anko Commons](https://github.com/Kotlin/anko)
-+ Coffee and Music
++ [Kotlin Programming Language](https://kotlinlang.org) - Language used to write up the application
++ [Dagger](https://google.github.io/dagger/) - For dependency injection to allow creating an MVP structure for the application
++ [Anko Commons](https://github.com/Kotlin/anko) - syntactic sugar around using common utils in the Android API. 
++ [Gradle](https://gradle.org/) Build system for building the  application and obtaining dependencies
++ Coffee and Music - for keeping my eyelids open and mind awake
 
 ## Contributing
 
@@ -98,7 +99,7 @@ Please read [CONTRIBUTING](./CONTRIBUTING.md) for details on contribution and [C
 
 ## Versioning
 
-SemVer is used for versioning. For the versions available, see the tags on this repository.
+[SemVer](https://semver.org/) is used for versioning. For the versions available, see the [tags](https://github.com/BrianLusina/silentium/tags) on this repository.
 
 ## License
 
