@@ -35,18 +35,125 @@ jobs:
                                         - ~/.gradle
                                 keys:
                                         - jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}       
-                        
-                        - run:
-                                name: "Run lint tests"
-                                command: ./gradlew lint test
-                            
-                        - store_artifacts:
-                                path: app/build/reports
-                                destination: reports
-                        
-                        - store_test_results:
-                                path: app/build/test-results
-                        
-                        - run:
-                                name: Deploy to Play Store
-                                command: ./gradlew :app:publishApkRelease
+
+                        - persist_to_workspace:
+                                root: .
+                                paths: .
+
+       test:
+               docker:
+                       - image: circleci/android:api-26-alpha
+               working_directory: ~/repo
+               steps:
+                       - attach_workspace:
+                              at: .
+
+                       - restore_cache:
+                              key: {{ checksum "build.gradle" }}-{{ .Branch }}
+                              keys:
+                                      - app-{{ checksum "app/build.gradle" }}
+
+                       - run:
+                               name: "Run lint tests"
+                               command: ./gradlew lint test
+
+                       - run:
+                               name: Run Tests
+                               command: ./gradlew test --no-daemon --max-workers 2
+
+#                       - run:
+#                               name: Setup emulator
+#                               command: sdkmanager "system-images;android-22;default;armeabi-v7a" && echo "no" | avdmanager create avd -n test -k "system-images;android-22;default;armeabi-v7a"
+#
+#                       - run:
+#                               name: Launch emulator
+#                               command: export LD_LIBRARY_PATH=${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib && emulator64-arm -avd test -noaudio -no-boot-anim -no-window -accel on
+#                               background: true
+#
+#                       - run:
+#                               name: Run Emulator Tests
+#                               command: ./gradlew :mojaapp:connectedAndroidTest
+
+
+                       - store_test_results:
+                                path: ~/repo/app/build/test-results
+
+                       - store_artifacts:
+                               path: ~/repo/app/build/reports/tests/
+                               destination: /pdfreader/reports/
+
+                       - persist_to_workspace:
+                               root: .
+                               paths: .
+
+       deploy:
+               docker:
+                       - image: circleci/android:api-26-alpha
+
+               working_directory: ~/repo
+               steps:
+                       - attach_workspace:
+                              at: .
+
+                       - restore_cache:
+                              key: {{ checksum "build.gradle" }}-{{ .Branch }}
+                              keys:
+                                      - app-{{ checksum "app/build.gradle" }}
+
+                       - run:
+                              name: Assemble APKs and distribute to Beta Testing
+                              command: ./scripts/circleci_beta_setup.sh
+
+                       - store_artifacts:
+                               path: ~/repo/app/build/outputs/apk/
+                               destination: /app/apks/
+
+                       - deploy:
+                               name: Deploy to Play Store
+                               command: ./gradlew :app:publishApkRelease
+
+# define work flows
+workflows:
+        version: 2
+        build-test-deploy-tag:
+                jobs:
+                        - build
+
+                        - test:
+                                requires:
+                                        - build
+
+                        - deploy:
+                                requires:
+                                        - test
+                                filters:
+                                        branches:
+                                                only:
+                                                        - develop
+                                                ignore:
+                                                        - /^staging-.*/
+                                                        - master
+                                                        - /^feature-.*/
+                                                        - /^feature/.*/
+                                                        - /^bugfix-.*/
+                                                        - /^bugfix/.*/
+                                                        - /^hotfix/.*/
+
+#                        - createReleaseTags:
+#                                requires:
+#                                        - deployProd
+#                                        - deployBeta
+#                                        - deployAlpha
+#
+#                                filters:
+#                                        branches:
+#                                                only:
+#                                                        - master
+#                                                        - develop
+#                                                        - staging
+#                                                ignore:
+#                                                        - /^feature-.*/
+#                                                        - /^feature/.*/
+#                                                        - /^bugfix-.*/
+#                                                        - /^bugfix/.*/
+#                                                        - /^hotfix/.*/
