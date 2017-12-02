@@ -1,4 +1,4 @@
-package com.silentium.provider;
+package com.silentium.data.db.provider;
 
 /*
 * Copyright (C) 2017 The Android Open Source Project

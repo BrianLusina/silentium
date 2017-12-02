@@ -1,4 +1,4 @@
-package com.silentium;
+package com.silentium.ui;
 
 /*
 * Copyright (C) 2017 The Android Open Source Project
@@ -30,6 +30,8 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
+
+import com.silentium.receivers.GeofenceBroadcastReceiver;
 
 import java.util.ArrayList;
 import java.util.List;

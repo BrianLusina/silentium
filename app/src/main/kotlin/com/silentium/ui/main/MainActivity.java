@@ -1,4 +1,4 @@
-package com.silentium;
+package com.silentium.ui.main;
 
 /*
 * Copyright (C) 2017 The Android Open Source Project
@@ -37,7 +37,10 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.silentium.provider.PlaceContract;
+import com.silentium.R;
+import com.silentium.data.db.provider.PlaceContract;
+import com.silentium.ui.Geofencing;
+import com.silentium.ui.PlaceListAdapter;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;

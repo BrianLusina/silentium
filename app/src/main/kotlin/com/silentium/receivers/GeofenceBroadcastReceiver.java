@@ -1,4 +1,4 @@
-package com.silentium;
+package com.silentium.receivers;
 
 /*
 * Copyright (C) 2017 The Android Open Source Project
@@ -29,6 +29,9 @@ import android.media.AudioManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+
+import com.silentium.R;
+import com.silentium.ui.main.MainActivity;
 
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 

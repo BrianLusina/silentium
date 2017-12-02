@@ -5,7 +5,7 @@
 # 2. https://gist.github.com/KioKrofovitch/716e6a681acb33859d16
 # 3. https://stackoverflow.com/questions/35440907/can-circle-ci-reference-gradle-properties-credentials
 
-export GRADLE_PROPERTIES=$HOME"/gradle.properties"
+export GRADLE_PROPERTIES=$HOME"/repo/gradle.properties"
 export KEYSTORE_PROPERTIES=$HOME"/repo/keystores/keystore.properties"
 export PUBLISH_KEY_FILE=$HOME"/repo/keystores/silentium_publish_key.json"
 export STORE_FILE_LOCATION=$HOME"/repo/silentium.jks"

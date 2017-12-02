@@ -31,6 +31,7 @@ allprojects {
         jcenter()
         google()
         mavenCentral()
+        maven { url 'https://maven.google.com' }
     }
 }
 
@@ -38,13 +39,12 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-
 /**
  * Gets keystore properties file from r*/
 def getKeyStorePropertiesFile = { ->
-    try{
+    try {
         return rootProject.file("keystores/keystore.properties")
-    }catch (Exception ignored){
+    } catch (Exception ignored) {
         return new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/keystore.properties")
     }
 }
@@ -54,12 +54,13 @@ def getKeyStorePropertiesFile = { ->
  * gradle.properties file in root project directory
  * */
 def getSilentiumServiceAccountKey = { ->
+    Properties properties = new Properties()
     try {
-        Properties properties = new Properties()
         properties.load(new FileInputStream("gradle.properties"))
         return properties.getProperty("SILENTIUM_SERVICE_ACCOUNT_EMAIL")
     } catch (Exception ignored) {
-        return ""
+        properties.load(new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
+        return properties.getProperty("SILENTIUM_SERVICE_ACCOUNT_EMAIL")
     }
 }
 
@@ -68,11 +69,11 @@ def getSilentiumServiceAccountKey = { ->
  * Release tracks are either "alpha", "beta", "production", "rollout"
  * */
 def getReleaseTrack = { ->
-    try{
-        Properties properties = new Properties()
+    Properties properties = new Properties()
+    try {
         properties.load(new FileInputStream("gradle.properties"))
         return Integer.parseInt(properties.getProperty("RELEASE_TRACK"))
-    }catch (ignored){
+    } catch (ignored) {
         return "beta"
     }
 }
@@ -84,7 +85,7 @@ def getReleaseTrack = { ->
  * file at root of project
  * */
 def getVersionCode = { ->
-    try{
+    try {
         def stdout = new ByteArrayOutputStream()
         exec {
             commandLine "git", "rev-list", "--first-parent", "--count", "origin/master"
@@ -95,10 +96,15 @@ def getVersionCode = { ->
         // this ensures that the version code remains unique for every build
         def number = 50 + random.nextInt(150) + random.nextInt(20) * random.nextInt(10)
         return Integer.parseInt(stdout.toString().trim()) + number
-    }catch (ignored){
+    } catch (ignored) {
         Properties properties = new Properties()
-        properties.load(new FileInputStream("gradle.properties"))
-        return Integer.parseInt(properties.getProperty("VERSION_CODE"))
+        try {
+            properties.load(new FileInputStream("gradle.properties"))
+            return Integer.parseInt(properties.getProperty("VERSION_CODE"))
+        } catch (Exception ignored2) {
+            properties.load(new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
+            return Integer.parseInt(properties.getProperty("VERSION_CODE"))
+        }
     }
 }
 
@@ -114,10 +120,15 @@ def getVersionName = { ->
             standardOutput = stdout
         }
         return stdout.toString().trim()
-    }catch (ignored){
+    } catch (ignored) {
         Properties properties = new Properties()
-        properties.load(new FileInputStream("gradle.properties"))
-        return properties.getProperty("VERSION_NAME")
+        try {
+            properties.load(new FileInputStream("gradle.properties"))
+            return properties.getProperty("VERSION_NAME")
+        } catch (Exception ig2) {
+            properties.load(new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
+            return properties.getProperty("VERSION_NAME")
+        }
     }
 }
 
@@ -129,6 +140,16 @@ ext {
     targetSdkVersion = 26
     versionCode = getVersionCode()
     versionName = getVersionName()
+
+    // multidex
+    multidexSupport = "1.0.1"
+
+    // room
+    roomVersion = "1.0.0"
+
+    //rx
+    rxAndroidVersion = "2.0.1"
+    rxKotlinVersion = "2.2.0"
 
     // play services
     playServicesVersion = "11.6.2"
