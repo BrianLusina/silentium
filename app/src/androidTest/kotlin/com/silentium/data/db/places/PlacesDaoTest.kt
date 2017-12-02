@@ -38,7 +38,7 @@ class PlacesDaoTest {
     @Test
     @Throws(Exception::class)
     fun insertPlaceEntityAndRead(){
-        val placeEntity = PlacesEntity(3, "Nakuru", "Milimani",
+        val placeEntity = PlacesEntity("3", "Nakuru", "Milimani",
                 Locale("English", "KE"), LatLng(0.0,0.0))
 
         placesDao.insertPlaceEntity(placeEntity)

@@ -31,4 +31,8 @@ class DataManagerImpl @Inject constructor(private val dbHelper: DbHelper,
     override fun getPlaces(): Flowable<List<PlacesEntity>> {
         return dbHelper.getPlaces()
     }
+
+    override fun getPlaceById(placeId: String): Flowable<PlacesEntity> {
+        return dbHelper.getPlaceById(placeId)
+    }
 }

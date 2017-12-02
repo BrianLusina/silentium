@@ -1,6 +1,7 @@
 package com.silentium.ui.main
 
 import com.google.android.gms.location.places.Places
+import com.google.android.gms.location.places.internal.PlaceEntity
 import com.silentium.data.db.places.PlacesEntity
 
 /**
@@ -27,9 +28,12 @@ interface MainView {
 
     fun addNewPlace()
 
-    fun refreshPlacesData()
+    fun updateAdapter(placesEntity: PlacesEntity)
 
-    fun updateAdapter(placesList : List<PlacesEntity>)
+    /**
+     * Registers geo fence for place entity given its id
+     * */
+    fun registerGeoFenceForPlace(placesEntityId: String)
 
     /**
      * Displays error

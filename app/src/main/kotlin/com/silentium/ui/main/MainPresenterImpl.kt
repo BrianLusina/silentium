@@ -55,6 +55,26 @@ constructor(private val dataManager: DataManager,
         mMainView.addNewPlace()
     }
 
+    override fun onGetPlaceById(placeId: String) {
+        compositeDisposable.add(
+                dataManager.getPlaceById(placeId)
+                        .observeOn(schedulerProvider.ui())
+                        .subscribeOn(schedulerProvider.io())
+                        .subscribe({
+                            // on next
+                            mMainView.updateAdapter(it)
+                            mMainView.registerGeoFenceForPlace(it.id)
+                        },{
+                            // on error
+                            mMainView.displayError("Failed to retrieve places")
+                            error("Failed to get places ${it.message}", it)
+                        }, {
+                            // on complete
+                            info { "on Complete" }
+                        })
+        )
+    }
+
     override fun onGetPlaces() {
         compositeDisposable.add(
                 dataManager.getPlaces()
@@ -62,7 +82,10 @@ constructor(private val dataManager: DataManager,
                         .subscribeOn(schedulerProvider.io())
                         .subscribe({
                             // on next
-                            mMainView.updateAdapter(it)
+                            it.forEach{
+                                mMainView.updateAdapter(it)
+                                mMainView.registerGeoFenceForPlace(it.id)
+                            }
                         },{
                             // on error
                             mMainView.displayError("Failed to retrieve places")

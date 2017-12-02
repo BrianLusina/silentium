@@ -16,4 +16,10 @@ interface DbHelper{
      * Gets places from db
      * */
     fun getPlaces() : Flowable<List<PlacesEntity>>
+
+    /**
+     * Gets places by id
+     * @param placeId PLace Id for given Location
+     * */
+    fun getPlaceById(placeId : String) : Flowable<PlacesEntity>
 }

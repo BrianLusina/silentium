@@ -38,4 +38,6 @@ interface MainPresenter<V : MainView> {
      * Gets places from the database
      * */
     fun onGetPlaces()
+
+    fun onGetPlaceById(placeId : String)
 }
