@@ -26,6 +26,12 @@ android {
         multiDexEnabled = true
         manifestPlaceholders = [geoApiKey: GEO_API_KEY]
         playAccountConfig = playAccountConfigs.defaultAccountConfig
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     // configurations for deployment
@@ -92,6 +98,7 @@ android {
 
         androidTest {
             java.srcDirs += "src/androidTest/kotlin"
+            assets.srcDirs += files("$projectDir/schemas".toString())
         }
 
         test {
@@ -128,6 +135,7 @@ dependencies {
     // room
     implementation "android.arch.persistence.room:runtime:$roomVersion"
     implementation "android.arch.persistence.room:rxjava2:$roomVersion"
+    androidTestImplementation "android.arch.persistence.room:testing:$roomVersion"
     kapt "android.arch.persistence.room:compiler:$roomVersion"
     
     // play services

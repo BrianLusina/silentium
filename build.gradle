@@ -54,11 +54,12 @@ def getKeyStorePropertiesFile = { ->
  * gradle.properties file in root project directory
  * */
 def getSilentiumServiceAccountKey = { ->
-    Properties properties = new Properties()
     try {
+        Properties properties = new Properties()
         properties.load(new FileInputStream("gradle.properties"))
         return properties.getProperty("SILENTIUM_SERVICE_ACCOUNT_EMAIL")
     } catch (Exception ignored) {
+        Properties properties = new Properties()
         properties.load(new FileInputStream(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
         return properties.getProperty("SILENTIUM_SERVICE_ACCOUNT_EMAIL")
     }
@@ -69,8 +70,8 @@ def getSilentiumServiceAccountKey = { ->
  * Release tracks are either "alpha", "beta", "production", "rollout"
  * */
 def getReleaseTrack = { ->
-    Properties properties = new Properties()
     try {
+        Properties properties = new Properties()
         properties.load(new FileInputStream("gradle.properties"))
         return Integer.parseInt(properties.getProperty("RELEASE_TRACK"))
     } catch (ignored) {
@@ -97,11 +98,12 @@ def getVersionCode = { ->
         def number = 50 + random.nextInt(150) + random.nextInt(20) * random.nextInt(10)
         return Integer.parseInt(stdout.toString().trim()) + number
     } catch (ignored) {
-        Properties properties = new Properties()
         try {
+            Properties properties = new Properties()
             properties.load(new FileInputStream("gradle.properties"))
             return Integer.parseInt(properties.getProperty("VERSION_CODE"))
-        } catch (Exception ignored2) {
+        } catch (ignore) {
+            Properties properties = new Properties()
             properties.load(new FileInputStream(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
             return Integer.parseInt(properties.getProperty("VERSION_CODE"))
         }
@@ -121,11 +123,12 @@ def getVersionName = { ->
         }
         return stdout.toString().trim()
     } catch (ignored) {
-        Properties properties = new Properties()
         try {
+            Properties properties = new Properties()
             properties.load(new FileInputStream("gradle.properties"))
             return properties.getProperty("VERSION_NAME")
-        } catch (Exception ig2) {
+        } catch (ignore) {
+            Properties properties = new Properties()
             properties.load(new FileInputStream(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
             return properties.getProperty("VERSION_NAME")
         }

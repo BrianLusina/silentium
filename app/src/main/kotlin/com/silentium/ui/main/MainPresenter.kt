@@ -33,4 +33,9 @@ interface MainPresenter<V : MainView> {
     fun onAddNewLocationClicked()
 
     fun isGeoFencesEnabled() : Boolean
+
+    /**
+     * Gets places from the database
+     * */
+    fun onGetPlaces()
 }

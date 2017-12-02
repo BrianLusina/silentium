@@ -24,6 +24,7 @@ import com.google.android.gms.location.places.Places
 import com.google.android.gms.location.places.ui.PlacePicker
 import com.silentium.R
 import com.silentium.app.SilentiumApp
+import com.silentium.data.db.places.PlacesEntity
 import com.silentium.data.db.provider.PlaceContract
 import com.silentium.di.components.ActivityComponent
 import com.silentium.di.components.DaggerActivityComponent
@@ -160,15 +161,29 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
     }
 
     override fun refreshPlacesData() {
-        val uri = PlaceContract.PlaceEntry.CONTENT_URI
-        val data = contentResolver.query(
-                uri, null, null, null, null)
+        mainPresenter.onGetPlaces()
+//
+//        val uri = PlaceContract.PlaceEntry.CONTENT_URI
+//        val data = contentResolver.query(uri, null, null, null, null)
+//
+//        if (data == null || data.count == 0) return
+//        val guids = ArrayList<String>()
+//        while (data.moveToNext()) {
+//            guids.add(data.getString(data.getColumnIndex(PlaceContract.PlaceEntry.COLUMN_PLACE_ID)))
+//        }
+//        val placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, *guids.toTypedArray())
+//        placeResult.setResultCallback { places ->
+//            placeListAdapter.swapPlaces(places)
+//            geoFencing.updateGeofencesList(places)
+//            if (mainPresenter.isGeoFencesEnabled())
+//                geoFencing.registerAllGeofences()
+//        }
+    }
 
-        if (data == null || data.count == 0) return
+    override fun updateAdapter(placesList: List<PlacesEntity>) {
         val guids = ArrayList<String>()
-        while (data.moveToNext()) {
-            guids.add(data.getString(data.getColumnIndex(PlaceContract.PlaceEntry.COLUMN_PLACE_ID)))
-        }
+        placesList.forEach { guids.add(it.id.toString()) }
+
         val placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, *guids.toTypedArray())
         placeResult.setResultCallback { places ->
             placeListAdapter.swapPlaces(places)
@@ -214,15 +229,19 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
 
             // add to db
             mainPresenter.onAddPlaceToDatabase(place)
-
-            // Insert a new place into DB
-            val contentValues = ContentValues()
-            contentValues.put(PlaceContract.PlaceEntry.COLUMN_PLACE_ID, placeID)
-            contentResolver.insert(PlaceContract.PlaceEntry.CONTENT_URI, contentValues)
+//
+//            // Insert a new place into DB
+//            val contentValues = ContentValues()
+//            contentValues.put(PlaceContract.PlaceEntry.COLUMN_PLACE_ID, placeID)
+//            contentResolver.insert(PlaceContract.PlaceEntry.CONTENT_URI, contentValues)
 
             // Get live data information
             refreshPlacesData()
         }
+    }
+
+    override fun displayError(message: String) {
+        longToast("Error: $message")
     }
 
     override fun onConnected(bundle: Bundle?) {
@@ -238,4 +257,8 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
         error("API Client connection failed")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mainPresenter.onDetach()
+    }
 }

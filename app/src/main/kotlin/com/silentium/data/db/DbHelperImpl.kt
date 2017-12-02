@@ -3,6 +3,7 @@ package com.silentium.data.db
 import com.google.android.gms.location.places.Place
 import com.silentium.data.db.places.PlacesDao
 import com.silentium.data.db.places.PlacesEntity
+import io.reactivex.Flowable
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,5 +23,9 @@ class DbHelperImpl @Inject constructor(private val placesDao: PlacesDao) : DbHel
                 place.latLng
         )
         placesDao.insertPlaceEntity(placeEntity)
+    }
+
+    override fun getPlaces(): Flowable<List<PlacesEntity>> {
+        return placesDao.getAllPlaces()
     }
 }

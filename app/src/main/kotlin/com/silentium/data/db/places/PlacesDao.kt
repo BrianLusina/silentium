@@ -31,7 +31,7 @@ interface PlacesDao {
      * @param placeId Place Id
      * */
     @Query("select * from places where id = :placeId")
-    fun getPlaceById(placeId : String) : Flowable<PlacesEntity>
+    fun getPlaceById(placeId : Long) : Flowable<PlacesEntity>
 
     // ---------------- UPDATE ------------------
 

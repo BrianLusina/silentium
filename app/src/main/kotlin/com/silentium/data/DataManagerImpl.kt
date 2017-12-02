@@ -2,7 +2,9 @@ package com.silentium.data
 
 import com.google.android.gms.location.places.Place
 import com.silentium.data.db.DbHelper
+import com.silentium.data.db.places.PlacesEntity
 import com.silentium.data.prefs.PreferencesHelper
+import io.reactivex.Flowable
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,5 +26,9 @@ class DataManagerImpl @Inject constructor(private val dbHelper: DbHelper,
 
     override fun addPlaceToDatabase(place: Place) {
         dbHelper.addPlaceToDatabase(place)
+    }
+
+    override fun getPlaces(): Flowable<List<PlacesEntity>> {
+        return dbHelper.getPlaces()
     }
 }
