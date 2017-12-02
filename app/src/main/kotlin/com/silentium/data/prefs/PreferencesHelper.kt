@@ -9,4 +9,14 @@ package com.silentium.data.prefs
 
 interface PreferencesHelper {
 
+    /***
+     * Gets the geo fences enabled setting
+     * */
+    fun getGeoFencesEnabled() : Boolean
+
+    /**
+     * Sets the geo fences enabled setting
+     * @param enabled
+     * */
+    fun setGeoFencesEnabled(enabled: Boolean)
 }

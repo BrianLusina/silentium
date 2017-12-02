@@ -21,7 +21,30 @@ constructor(val dataManager: DataManager,
     override fun onAttach(mainView: V) {
         this.mMainView = mainView
 
-        mainView.setRecyclerAdapter()
+        mMainView.setRecyclerAdapter()
+        mMainView.setListeners()
+    }
+
+    override fun onResume() {
+        mMainView.setCheckBoxPermissions()
+    }
+
+    override fun onLocationPermissionClicked() {
+        mMainView.requestLocationPermissions()
+    }
+
+    override fun onRingerPermissionClicked() {
+        mMainView.openRingerSettings()
+    }
+
+    override fun onEnableGeoFencesChecked(enabled: Boolean) {
+        dataManager.setGeoFencesEnabled(enabled)
+    }
+
+    override fun isGeoFencesEnabled() = dataManager.getGeoFencesEnabled()
+
+    override fun onAddNewLocationClicked() {
+        mMainView.addNewPlace()
     }
 
     override fun onDetach() {

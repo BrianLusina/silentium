@@ -10,8 +10,14 @@ import javax.inject.Singleton
  * @Notes Data manager implementation that implements interfaces for the Model layer
  */
 @Singleton
-class DataManagerImpl @Inject constructor(val dbHelper: DbHelper,
-                                          val preferencesHelper: PreferencesHelper): DataManager{
+class DataManagerImpl @Inject constructor(private val dbHelper: DbHelper,
+                                          private val preferencesHelper: PreferencesHelper): DataManager{
 
+    override fun getGeoFencesEnabled(): Boolean {
+        return preferencesHelper.getGeoFencesEnabled()
+    }
 
+    override fun setGeoFencesEnabled(enabled: Boolean) {
+        preferencesHelper.setGeoFencesEnabled(enabled)
+    }
 }
