@@ -159,25 +159,6 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == placePickerRequestCode && resultCode == Activity.RESULT_OK) {
-            val place = PlacePicker.getPlace(this, data) ?: return
-            // Extract the place information from the API
-            val placeName = place.name.toString()
-            val placeAddress = place.address.toString()
-            val placeID = place.id
-
-            // Insert a new place into DB
-            val contentValues = ContentValues()
-            contentValues.put(PlaceContract.PlaceEntry.COLUMN_PLACE_ID, placeID)
-            contentResolver.insert(PlaceContract.PlaceEntry.CONTENT_URI, contentValues)
-
-            // Get live data information
-            refreshPlacesData()
-        }
-    }
-
     override fun refreshPlacesData() {
         val uri = PlaceContract.PlaceEntry.CONTENT_URI
         val data = contentResolver.query(
@@ -208,12 +189,39 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
             val builder = PlacePicker.IntentBuilder()
             val i = builder.build(this)
             startActivityForResult(i, placePickerRequestCode)
-        } catch (e: GooglePlayServicesRepairableException) {
-            error(String.format("GooglePlayServices Not Available [%s]", e.message))
-        } catch (e: GooglePlayServicesNotAvailableException) {
-            error(String.format("GooglePlayServices Not Available [%s]", e.message))
-        } catch (e: Exception) {
-            error(String.format("PlacePicker Exception: %s", e.message))
+        } catch(e : Exception){
+            when(e){
+                is GooglePlayServicesRepairableException -> {
+                    error(String.format("GooglePlayServices Not Available [%s]", e.message))
+                }
+                is GooglePlayServicesNotAvailableException -> {
+                    error(String.format("GooglePlayServices Not Available [%s]", e.message))
+                }
+                else -> {
+                    error(String.format("PlacePicker Exception: %s", e.message))
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == placePickerRequestCode && resultCode == Activity.RESULT_OK) {
+            val place = PlacePicker.getPlace(this, data) ?: return
+            // Extract the place information from the API
+            val placeName = place.name.toString()
+            val placeAddress = place.address.toString()
+            val placeID = place.id
+
+            // add to db
+            mainPresenter.onAddPlaceToDatabase(place)
+
+            // Insert a new place into DB
+            val contentValues = ContentValues()
+            contentValues.put(PlaceContract.PlaceEntry.COLUMN_PLACE_ID, placeID)
+            contentResolver.insert(PlaceContract.PlaceEntry.CONTENT_URI, contentValues)
+
+            // Get live data information
+            refreshPlacesData()
         }
     }
 

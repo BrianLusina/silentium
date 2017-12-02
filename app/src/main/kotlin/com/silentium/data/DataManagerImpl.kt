@@ -1,5 +1,6 @@
 package com.silentium.data
 
+import com.google.android.gms.location.places.Place
 import com.silentium.data.db.DbHelper
 import com.silentium.data.prefs.PreferencesHelper
 import javax.inject.Inject
@@ -19,5 +20,9 @@ class DataManagerImpl @Inject constructor(private val dbHelper: DbHelper,
 
     override fun setGeoFencesEnabled(enabled: Boolean) {
         preferencesHelper.setGeoFencesEnabled(enabled)
+    }
+
+    override fun addPlaceToDatabase(place: Place) {
+        dbHelper.addPlaceToDatabase(place)
     }
 }

@@ -1,5 +1,6 @@
 package com.silentium.ui.main
 
+import com.google.android.gms.location.places.Place
 import com.silentium.data.DataManager
 import com.silentium.data.io.SchedulerProvider
 import io.reactivex.disposables.CompositeDisposable
@@ -41,6 +42,10 @@ constructor(val dataManager: DataManager,
         dataManager.setGeoFencesEnabled(enabled)
     }
 
+    override fun onAddPlaceToDatabase(place: Place) {
+        dataManager.addPlaceToDatabase(place)
+    }
+
     override fun isGeoFencesEnabled() = dataManager.getGeoFencesEnabled()
 
     override fun onAddNewLocationClicked() {
@@ -48,6 +53,6 @@ constructor(val dataManager: DataManager,
     }
 
     override fun onDetach() {
-
+        compositeDisposable.dispose()
     }
 }

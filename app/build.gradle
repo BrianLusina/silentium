@@ -134,7 +134,11 @@ dependencies {
     implementation "com.google.android.gms:play-services-places:$playServicesVersion"
     implementation "com.google.android.gms:play-services-location:$playServicesVersion"
 
+    // anko
     implementation "org.jetbrains.anko:anko-commons:$ankoVersion"
+
+    // gson
+    implementation "com.google.code.gson:gson:$gsonVersion"
 
     implementation "com.google.dagger:dagger:$daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"

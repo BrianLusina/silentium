@@ -160,6 +160,9 @@ ext {
     // anko version
     ankoVersion = "0.10.3"
 
+    // gson version
+    gsonVersion = "2.8.2"
+
     espressoVersion = "2.2.2"
     jUnitVerion = "4.12"
 

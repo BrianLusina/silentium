@@ -1,6 +1,8 @@
 package com.silentium.data.db
 
+import com.google.android.gms.location.places.Place
 import com.silentium.data.db.places.PlacesDao
+import com.silentium.data.db.places.PlacesEntity
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -9,5 +11,16 @@ import javax.inject.Singleton
  * @Notes Db Helper implementation
  */
 @Singleton
-class DbHelperImpl @Inject constructor(val placesDao: PlacesDao) : DbHelper{
+class DbHelperImpl @Inject constructor(private val placesDao: PlacesDao) : DbHelper{
+
+    override fun addPlaceToDatabase(place: Place) {
+        val placeEntity = PlacesEntity(
+                place.id.toLong(),
+                place.name.toString(),
+                place.address.toString(),
+                place.locale,
+                place.latLng
+        )
+        placesDao.insertPlaceEntity(placeEntity)
+    }
 }

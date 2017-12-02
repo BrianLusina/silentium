@@ -3,6 +3,8 @@ package com.silentium.data.db.places
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import com.google.android.gms.maps.model.LatLng
+import java.util.*
 
 /**
  * @author lusinabrian on 02/12/17.
@@ -11,5 +13,18 @@ import android.arch.persistence.room.PrimaryKey
 @Entity(tableName = "places")
 data class PlacesEntity(
         @ColumnInfo(name = "id")
-        @PrimaryKey(autoGenerate = true)
-        val id: Long)
+        @PrimaryKey(autoGenerate = false)
+        var id: Long,
+
+        @ColumnInfo(name = "name")
+        var name: String,
+
+        @ColumnInfo(name = "address")
+        var address: String,
+
+        @ColumnInfo(name = "locale")
+        var locale : Locale,
+
+        @ColumnInfo(name = "latLng")
+        var latLng : LatLng
+)
