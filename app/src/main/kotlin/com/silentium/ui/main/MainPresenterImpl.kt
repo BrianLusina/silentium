@@ -1,8 +1,12 @@
 package com.silentium.ui.main
 
+import com.google.android.gms.location.places.Place
 import com.silentium.data.DataManager
 import com.silentium.data.io.SchedulerProvider
 import io.reactivex.disposables.CompositeDisposable
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.error
+import org.jetbrains.anko.info
 import javax.inject.Inject
 
 /**
@@ -11,9 +15,9 @@ import javax.inject.Inject
  */
 class MainPresenterImpl<V : MainView>
 @Inject
-constructor(val dataManager: DataManager,
-            val compositeDisposable: CompositeDisposable,
-            val schedulerProvider: SchedulerProvider): MainPresenter<V>{
+constructor(private val dataManager: DataManager,
+            private val compositeDisposable: CompositeDisposable,
+            private val schedulerProvider: SchedulerProvider): MainPresenter<V>, AnkoLogger{
 
     lateinit var mMainView : V
         private set
@@ -41,13 +45,59 @@ constructor(val dataManager: DataManager,
         dataManager.setGeoFencesEnabled(enabled)
     }
 
+    override fun onAddPlaceToDatabase(place: Place) {
+        dataManager.addPlaceToDatabase(place)
+    }
+
     override fun isGeoFencesEnabled() = dataManager.getGeoFencesEnabled()
 
     override fun onAddNewLocationClicked() {
         mMainView.addNewPlace()
     }
 
-    override fun onDetach() {
+    override fun onGetPlaceById(placeId: String) {
+        compositeDisposable.add(
+                dataManager.getPlaceById(placeId)
+                        .observeOn(schedulerProvider.ui())
+                        .subscribeOn(schedulerProvider.io())
+                        .subscribe({
+                            // on next
+                            mMainView.updateAdapter(it)
+                            mMainView.registerGeoFenceForPlace(it.id)
+                        },{
+                            // on error
+                            mMainView.displayError("Failed to retrieve places")
+                            error("Failed to get places ${it.message}", it)
+                        }, {
+                            // on complete
+                            info { "on Complete" }
+                        })
+        )
+    }
 
+    override fun onGetPlaces() {
+        compositeDisposable.add(
+                dataManager.getPlaces()
+                        .observeOn(schedulerProvider.ui())
+                        .subscribeOn(schedulerProvider.io())
+                        .subscribe({
+                            // on next
+                            it.forEach{
+                                mMainView.updateAdapter(it)
+                                mMainView.registerGeoFenceForPlace(it.id)
+                            }
+                        },{
+                            // on error
+                            mMainView.displayError("Failed to retrieve places")
+                            error("Failed to get places ${it.message}", it)
+                        }, {
+                            // on complete
+                            info { "on Complete" }
+                        })
+        )
+    }
+
+    override fun onDetach() {
+        compositeDisposable.dispose()
     }
 }

@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
 import android.app.NotificationManager
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -21,20 +20,18 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.places.Places
+import com.google.android.gms.location.places.internal.PlaceEntity
 import com.google.android.gms.location.places.ui.PlacePicker
 import com.silentium.R
 import com.silentium.app.SilentiumApp
-import com.silentium.data.db.provider.PlaceContract
+import com.silentium.data.db.places.PlacesEntity
+import com.silentium.data.geo.GeoFencing
 import com.silentium.di.components.ActivityComponent
 import com.silentium.di.components.DaggerActivityComponent
-import com.silentium.ui.Geofencing
-import com.silentium.ui.PlaceListAdapter
+import com.silentium.di.modules.ActivityModule
+import com.silentium.ui.places.PlaceListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
-import org.jetbrains.anko.info
-import org.jetbrains.anko.longToast
-import java.util.*
+import org.jetbrains.anko.*
 import javax.inject.Inject
 
 /**
@@ -51,6 +48,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
 
     private val activityComponent : ActivityComponent by lazy {
         DaggerActivityComponent.builder()
+                .activityModule(ActivityModule(this))
                 .appComponent((application as SilentiumApp).appComponent)
                 .build()
     }
@@ -71,8 +69,8 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
                 .build()
     }
 
-    private val geoFencing : Geofencing by lazy {
-        Geofencing(this, googleApiClient)
+    private val geoFencing : GeoFencing by lazy {
+        GeoFencing(this, googleApiClient)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,7 +116,6 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
         }
 
         // Initialize ringer permissions checkbox
-
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         // Check if the API supports such permission change and check if permission is granted
         if (Build.VERSION.SDK_INT >= 24 && !nm.isNotificationPolicyAccessGranted) {
@@ -133,6 +130,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
     override fun openRingerSettings() {
         val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
         startActivity(intent)
+
     }
 
     override fun requestLocationPermissions() {
@@ -157,41 +155,17 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == placePickerRequestCode && resultCode == Activity.RESULT_OK) {
-            val place = PlacePicker.getPlace(this, data) ?: return
-            // Extract the place information from the API
-            val placeName = place.name.toString()
-            val placeAddress = place.address.toString()
-            val placeID = place.id
-
-            // Insert a new place into DB
-            val contentValues = ContentValues()
-            contentValues.put(PlaceContract.PlaceEntry.COLUMN_PLACE_ID, placeID)
-            contentResolver.insert(PlaceContract.PlaceEntry.CONTENT_URI, contentValues)
-
-            // Get live data information
-            refreshPlacesData()
-        }
+    override fun updateAdapter(placesEntity: PlacesEntity) {
+        placeListAdapter.addPlaceEntityItem(placesEntity)
     }
 
-    override fun refreshPlacesData() {
-        val uri = PlaceContract.PlaceEntry.CONTENT_URI
-        val data = contentResolver.query(
-                uri, null, null, null, null)
-
-        if (data == null || data.count == 0) return
-        val guids = ArrayList<String>()
-        while (data.moveToNext()) {
-            guids.add(data.getString(data.getColumnIndex(PlaceContract.PlaceEntry.COLUMN_PLACE_ID)))
-        }
-        val placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, *guids.toTypedArray())
+    override fun registerGeoFenceForPlace(placesEntityId: String) {
+        val placeResult = Places.GeoDataApi.getPlaceById(googleApiClient, placesEntityId)
         placeResult.setResultCallback { places ->
-            placeListAdapter.swapPlaces(places)
             geoFencing.updateGeofencesList(places)
-            if (mainPresenter.isGeoFencesEnabled())
+            if (mainPresenter.isGeoFencesEnabled()){
                 geoFencing.registerAllGeofences()
+            }
         }
     }
 
@@ -206,17 +180,39 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
             val builder = PlacePicker.IntentBuilder()
             val i = builder.build(this)
             startActivityForResult(i, placePickerRequestCode)
-        } catch (e: GooglePlayServicesRepairableException) {
-            error(String.format("GooglePlayServices Not Available [%s]", e.message))
-        } catch (e: GooglePlayServicesNotAvailableException) {
-            error(String.format("GooglePlayServices Not Available [%s]", e.message))
-        } catch (e: Exception) {
-            error(String.format("PlacePicker Exception: %s", e.message))
+        } catch(e : Exception){
+            when(e){
+                is GooglePlayServicesRepairableException -> {
+                    error(String.format("GooglePlayServices Not Available [%s]", e.message))
+                }
+                is GooglePlayServicesNotAvailableException -> {
+                    error(String.format("GooglePlayServices Not Available [%s]", e.message))
+                }
+                else -> {
+                    error(String.format("PlacePicker Exception: %s", e.message))
+                }
+            }
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == placePickerRequestCode && resultCode == Activity.RESULT_OK) {
+            val place = PlacePicker.getPlace(this, data) ?: return
+
+            // add to db
+            mainPresenter.onAddPlaceToDatabase(place)
+
+            // Get live data information
+            mainPresenter.onGetPlaceById(place.id)
+        }
+    }
+
+    override fun displayError(message: String) {
+        longToast("Error: $message")
+    }
+
     override fun onConnected(bundle: Bundle?) {
-        refreshPlacesData()
+        mainPresenter.onGetPlaces()
         info("Api Client connected")
     }
 
@@ -228,4 +224,8 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
         error("API Client connection failed")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mainPresenter.onDetach()
+    }
 }

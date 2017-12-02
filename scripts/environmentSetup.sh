@@ -61,7 +61,7 @@ function downloadKeyStoreFile {
         # expose the sensitive uri in the build logs:
         curl -L -o ${STORE_FILE} ${KEY_STORE_URI}
     else
-            echo "Keystore uri not set.  .APK artifact will not be signed."
+        echo "Keystore uri not set.  .APK artifact will not be signed."
     fi
 }
 
