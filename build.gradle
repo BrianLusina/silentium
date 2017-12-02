@@ -59,7 +59,7 @@ def getSilentiumServiceAccountKey = { ->
         properties.load(new FileInputStream("gradle.properties"))
         return properties.getProperty("SILENTIUM_SERVICE_ACCOUNT_EMAIL")
     } catch (Exception ignored) {
-        properties.load(new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
+        properties.load(new FileInputStream(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
         return properties.getProperty("SILENTIUM_SERVICE_ACCOUNT_EMAIL")
     }
 }
@@ -102,7 +102,7 @@ def getVersionCode = { ->
             properties.load(new FileInputStream("gradle.properties"))
             return Integer.parseInt(properties.getProperty("VERSION_CODE"))
         } catch (Exception ignored2) {
-            properties.load(new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
+            properties.load(new FileInputStream(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
             return Integer.parseInt(properties.getProperty("VERSION_CODE"))
         }
     }
@@ -126,7 +126,7 @@ def getVersionName = { ->
             properties.load(new FileInputStream("gradle.properties"))
             return properties.getProperty("VERSION_NAME")
         } catch (Exception ig2) {
-            properties.load(new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
+            properties.load(new FileInputStream(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
             return properties.getProperty("VERSION_NAME")
         }
     }
@@ -162,6 +162,12 @@ ext {
 
     espressoVersion = "2.2.2"
     jUnitVerion = "4.12"
+
+    // robolectric
+    robolectricVersion = "3.6-alpha-1"
+
+    // truth
+    truthVersion = "0.36"
 
     // keystore
     keystorePropertiesFile = getKeyStorePropertiesFile()

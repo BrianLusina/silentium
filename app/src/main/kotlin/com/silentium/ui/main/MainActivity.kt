@@ -27,6 +27,7 @@ import com.silentium.app.SilentiumApp
 import com.silentium.data.db.provider.PlaceContract
 import com.silentium.di.components.ActivityComponent
 import com.silentium.di.components.DaggerActivityComponent
+import com.silentium.di.modules.ActivityModule
 import com.silentium.ui.Geofencing
 import com.silentium.ui.PlaceListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -51,6 +52,7 @@ class MainActivity : AppCompatActivity(), GoogleApiClient.ConnectionCallbacks, G
 
     private val activityComponent : ActivityComponent by lazy {
         DaggerActivityComponent.builder()
+                .activityModule(ActivityModule(this))
                 .appComponent((application as SilentiumApp).appComponent)
                 .build()
     }
