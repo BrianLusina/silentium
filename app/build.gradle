@@ -26,6 +26,12 @@ android {
         multiDexEnabled = true
         manifestPlaceholders = [geoApiKey: GEO_API_KEY]
         playAccountConfig = playAccountConfigs.defaultAccountConfig
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     // configurations for deployment
@@ -92,6 +98,7 @@ android {
 
         androidTest {
             java.srcDirs += "src/androidTest/kotlin"
+            assets.srcDirs += files("$projectDir/schemas".toString())
         }
 
         test {
@@ -128,13 +135,18 @@ dependencies {
     // room
     implementation "android.arch.persistence.room:runtime:$roomVersion"
     implementation "android.arch.persistence.room:rxjava2:$roomVersion"
+    androidTestImplementation "android.arch.persistence.room:testing:$roomVersion"
     kapt "android.arch.persistence.room:compiler:$roomVersion"
     
     // play services
     implementation "com.google.android.gms:play-services-places:$playServicesVersion"
     implementation "com.google.android.gms:play-services-location:$playServicesVersion"
 
+    // anko
     implementation "org.jetbrains.anko:anko-commons:$ankoVersion"
+
+    // gson
+    implementation "com.google.code.gson:gson:$gsonVersion"
 
     implementation "com.google.dagger:dagger:$daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"
@@ -143,6 +155,9 @@ dependencies {
 
     // tests
     testImplementation "junit:junit:$jUnitVerion"
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "com.google.truth:truth:$truthVersion"
+
     androidTestImplementation("com.android.support.test.espresso:espresso-core:$espressoVersion", {
         exclude group: "com.android.support", module: "support-annotations"
     })
