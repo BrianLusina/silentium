@@ -1,5 +1,7 @@
 # Silentium
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d50fb64b11a74899ae6c8285f96e1ed8)](https://www.codacy.com/app/BrianLusina/silentium?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=BrianLusina/silentium&amp;utm_campaign=Badge_Grade)
+
 Silentium means silent in Latin, this is a toy app that allows your device to go silent on certain pre-define regions that you select. This utilizes [GeoFences](https://developer.android.com/training/location/geofencing.html) API from Google.
 
 ## Getting Started
@@ -84,6 +86,23 @@ To get a list of more tasks to run. Use:
 ## Deployment
 
 You can deploy this project to any platform that allows hosting of apk files. The preferred destination being Google Play Store. However, you will need to update the package name of the application to your own, i.e. changing from `com.silentium` to `com.your.package.name` in the [AndroidManifest.xml](./app/src/main/AndroidManifest.xml) and [build.gradle](./app/build.gradle) files.
+
+You will also need to set the Service Account Email, Release track and the version code and version names in the `gradle.properties` file for automated deployment when tests pass on CI.
+
+```properties
+SILENTIUM_SERVICE_ACCOUNT_EMAIL=<PUBLISH_KEY>
+RELEASE_TRACK=<YOUR_PREFERRED_RELEASE_TRACK>
+VERSION_CODE=<VERSION_CODE>
+VERSION_NAME=<VERSION_NAME>
+```
+
+This is not particularly necessary as they will default set values in the project root [build.gradle](./build.gradle) file.
+But, you will need to set the Version code and version names in
+the `gradle.properties file`. Version Code being a number and Version name being a string following Semantic Versioning, e.g. *1.0.0*
+
+Release Track specifies whether to deploy to production, beta or alpha based off the branch the code is pushed to on Git using [CircleCI](https://circleci.com). This is generated automatically on the CI and defaults to beta if the track does not exist, this avoids pushing to production.
+
+The Service Account email is used to authorize the creation of releases and more details about how to get a service account email can be found [here](https://github.com/codepath/android_guides/wiki/Automating-Publishing-to-the-Play-Store). If none is available, this will default to an empty string.
 
 ## Built With
 

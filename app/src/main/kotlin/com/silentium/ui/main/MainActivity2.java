@@ -1,4 +1,4 @@
-package com.silentium;
+package com.silentium.ui.main;
 
 /*
 * Copyright (C) 2017 The Android Open Source Project
@@ -37,7 +37,10 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.silentium.provider.PlaceContract;
+import com.silentium.R;
+import com.silentium.data.db.provider.PlaceContract;
+import com.silentium.ui.Geofencing;
+import com.silentium.ui.PlaceListAdapter;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -56,7 +59,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements
+public class MainActivity2 extends AppCompatActivity implements
         ConnectionCallbacks,
         OnConnectionFailedListener {
 
@@ -240,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Initialize location permissions checkbox
         CheckBox locationPermissions = (CheckBox) findViewById(R.id.location_permission_checkbox);
-        if (ActivityCompat.checkSelfPermission(MainActivity.this,
+        if (ActivityCompat.checkSelfPermission(MainActivity2.this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             locationPermissions.setChecked(false);
         } else {
@@ -266,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onLocationPermissionClicked(View view) {
-        ActivityCompat.requestPermissions(MainActivity.this,
+        ActivityCompat.requestPermissions(MainActivity2.this,
                 new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                 PERMISSIONS_REQUEST_FINE_LOCATION);
     }

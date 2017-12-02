@@ -9,6 +9,20 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
+        classpath 'com.github.triplet.gradle:play-publisher:1.2.0'
+    }
+}
+
+plugins {
+    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC5-6"
+}
+
+detekt {
+    version = "1.0.0.RC5-6"
+    profile("main") {
+        input = "$projectDir/app"
+        config = "$projectDir/detekt.yml"
+        filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
     }
 }
 
@@ -17,6 +31,7 @@ allprojects {
         jcenter()
         google()
         mavenCentral()
+        maven { url 'https://maven.google.com' }
     }
 }
 
@@ -24,14 +39,96 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-
 /**
  * Gets keystore properties file from r*/
 def getKeyStorePropertiesFile = { ->
-    try{
+    try {
         return rootProject.file("keystores/keystore.properties")
-    }catch (Exception ignored){
+    } catch (Exception ignored) {
         return new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/keystore.properties")
+    }
+}
+
+/**
+ * Gets the service account email gradle.properties file, Ensure that you have a
+ * gradle.properties file in root project directory
+ * */
+def getSilentiumServiceAccountKey = { ->
+    Properties properties = new Properties()
+    try {
+        properties.load(new FileInputStream("gradle.properties"))
+        return properties.getProperty("SILENTIUM_SERVICE_ACCOUNT_EMAIL")
+    } catch (Exception ignored) {
+        properties.load(new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
+        return properties.getProperty("SILENTIUM_SERVICE_ACCOUNT_EMAIL")
+    }
+}
+
+/**
+ * Gets the release track to use for deployment
+ * Release tracks are either "alpha", "beta", "production", "rollout"
+ * */
+def getReleaseTrack = { ->
+    Properties properties = new Properties()
+    try {
+        properties.load(new FileInputStream("gradle.properties"))
+        return Integer.parseInt(properties.getProperty("RELEASE_TRACK"))
+    } catch (ignored) {
+        return "beta"
+    }
+}
+
+/**
+ * Get version code from git history
+ * This will dynamically increase the version code
+ * If it fails to get from git, it will get it from the properties file, ensure that there is a properties
+ * file at root of project
+ * */
+def getVersionCode = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine "git", "rev-list", "--first-parent", "--count", "origin/master"
+            standardOutput = stdout
+        }
+        Random random = new Random()
+
+        // this ensures that the version code remains unique for every build
+        def number = 50 + random.nextInt(150) + random.nextInt(20) * random.nextInt(10)
+        return Integer.parseInt(stdout.toString().trim()) + number
+    } catch (ignored) {
+        Properties properties = new Properties()
+        try {
+            properties.load(new FileInputStream("gradle.properties"))
+            return Integer.parseInt(properties.getProperty("VERSION_CODE"))
+        } catch (Exception ignored2) {
+            properties.load(new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
+            return Integer.parseInt(properties.getProperty("VERSION_CODE"))
+        }
+    }
+}
+
+/**
+ * Get version name will ensure that the version name of the application remains unique and ever changing
+ * for easier tracking. This will pull the information from git
+ * */
+def getVersionName = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine "git", "describe" "--dirty"
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    } catch (ignored) {
+        Properties properties = new Properties()
+        try {
+            properties.load(new FileInputStream("gradle.properties"))
+            return properties.getProperty("VERSION_NAME")
+        } catch (Exception ig2) {
+            properties.load(new File(System.getenv("BUDDYBUILD_SECURE_FILES") + "/gradle.properties"))
+            return properties.getProperty("VERSION_NAME")
+        }
     }
 }
 
@@ -41,8 +138,18 @@ ext {
     supportLibVersion = "27.0.2"
     minSdkVersion = 16
     targetSdkVersion = 26
-    versionCode = 1
-    versionName = "1.0.0"
+    versionCode = getVersionCode()
+    versionName = getVersionName()
+
+    // multidex
+    multidexSupport = "1.0.1"
+
+    // room
+    roomVersion = "1.0.0"
+
+    //rx
+    rxAndroidVersion = "2.0.1"
+    rxKotlinVersion = "2.2.0"
 
     // play services
     playServicesVersion = "11.6.2"
@@ -60,6 +167,11 @@ ext {
     keystorePropertiesFile = getKeyStorePropertiesFile()
     keystoreProperties = new Properties()
     keystoreProperties.load(new FileInputStream(ext.keystorePropertiesFile))
+
+    pJsonKeyFile = rootProject.file("keystores/silentium_publish_key.json")
+    serviceAccountEmail = getSilentiumServiceAccountKey()
+
+    releaseTrack = getReleaseTrack()
 
     /**
      * Set this to true to create two separate APKs instead of one:

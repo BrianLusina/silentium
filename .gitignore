@@ -2,6 +2,7 @@
 .idea/
 keystores/keystore.properties
 keystores/client_id.json
+keystores/silentium_publish_key.json
 gradle.properties
 release/
 *.jks

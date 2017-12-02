@@ -2,8 +2,17 @@ apply plugin: "com.android.application"
 apply plugin: 'kotlin-android'
 apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
+apply plugin: "com.github.triplet.play"
 
 android {
+    playAccountConfigs {
+        defaultAccountConfig {
+            serviceAccountEmail = rootProject.ext.serviceAccountEmail
+            // pk12File = rootProject.ext.pk12KeyFile
+            jsonFile = rootProject.ext.pJsonKeyFile
+        }
+    }
+
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
@@ -16,6 +25,15 @@ android {
 
         multiDexEnabled = true
         manifestPlaceholders = [geoApiKey: GEO_API_KEY]
+        playAccountConfig = playAccountConfigs.defaultAccountConfig
+    }
+
+    // configurations for deployment
+    play {
+        track = rootProject.ext.releaseTrack
+        untrackOld = true // will untrack "alpha" while upload to "beta"
+        errorOnSizeLimit = false
+        uploadImages = true
     }
 
     /**
@@ -99,9 +117,19 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibVersion"
+    implementation "com.android.support:multidex:$multidexSupport"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+    // rx
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
+    implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
+
+    // room
+    implementation "android.arch.persistence.room:runtime:$roomVersion"
+    implementation "android.arch.persistence.room:rxjava2:$roomVersion"
+    kapt "android.arch.persistence.room:compiler:$roomVersion"
+    
     // play services
     implementation "com.google.android.gms:play-services-places:$playServicesVersion"
     implementation "com.google.android.gms:play-services-location:$playServicesVersion"
