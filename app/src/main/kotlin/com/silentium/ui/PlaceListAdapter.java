@@ -1,4 +1,4 @@
-package com.silentium;
+package com.silentium.ui;
 
 /*
 * Copyright (C) 2017 The Android Open Source Project
@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.location.places.PlaceBuffer;
+
+import com.silentium.R;
 
 public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.PlaceViewHolder> {
 
