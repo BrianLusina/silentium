@@ -6,6 +6,7 @@ import com.silentium.data.io.SchedulerProvider
 import com.silentium.data.io.SchedulerProviderImpl
 import com.silentium.di.qualifiers.ActivityCtxQualifier
 import com.silentium.di.scope.ActivityScope
+import com.silentium.ui.PlaceListAdapter
 import com.silentium.ui.main.MainPresenter
 import com.silentium.ui.main.MainPresenterImpl
 import com.silentium.ui.main.MainView
@@ -45,5 +46,10 @@ class ActivityModule(private val mActivity : AppCompatActivity) {
     @ActivityScope
     fun provideMainPresenter(mainPresenter: MainPresenterImpl<MainView>) : MainPresenter<MainView>{
         return mainPresenter
+    }
+
+    @Provides
+    fun providePlaceListAdapter(@ActivityCtxQualifier context: Context) : PlaceListAdapter{
+        return PlaceListAdapter(context, null)
     }
 }

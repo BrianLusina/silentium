@@ -5,4 +5,8 @@ package com.silentium.ui.main
  * @Notes Interface for the presenter layer
  */
 interface MainPresenter<V : MainView> {
+
+    fun onAttach(mainView: V)
+
+    fun onDetach()
 }

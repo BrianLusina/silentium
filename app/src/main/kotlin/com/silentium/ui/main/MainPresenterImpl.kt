@@ -15,5 +15,16 @@ constructor(val dataManager: DataManager,
             val compositeDisposable: CompositeDisposable,
             val schedulerProvider: SchedulerProvider): MainPresenter<V>{
 
+    lateinit var mMainView : V
+        private set
 
+    override fun onAttach(mainView: V) {
+        this.mMainView = mainView
+
+        mainView.setRecyclerAdapter()
+    }
+
+    override fun onDetach() {
+
+    }
 }

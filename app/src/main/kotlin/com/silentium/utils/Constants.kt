@@ -6,3 +6,4 @@ package com.silentium.utils
  * @Notes Constants file
  */
 const val DATABASE_NAME = "silentium.db"
+const val PREFS_FILE_NAME = "silentiumprefs"

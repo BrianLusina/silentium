@@ -5,4 +5,10 @@ package com.silentium.ui.main
  * @Notes Main View interface
  */
 interface MainView {
+
+    /**
+     * Sets the adapter to the recycler view
+     * */
+    fun setRecyclerAdapter()
+
 }

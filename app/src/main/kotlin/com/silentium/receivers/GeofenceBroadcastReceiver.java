@@ -31,7 +31,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.silentium.R;
-import com.silentium.ui.main.MainActivity;
 
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 

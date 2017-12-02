@@ -59,7 +59,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements
+public class MainActivity2 extends AppCompatActivity implements
         ConnectionCallbacks,
         OnConnectionFailedListener {
 
@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // Initialize location permissions checkbox
         CheckBox locationPermissions = (CheckBox) findViewById(R.id.location_permission_checkbox);
-        if (ActivityCompat.checkSelfPermission(MainActivity.this,
+        if (ActivityCompat.checkSelfPermission(MainActivity2.this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             locationPermissions.setChecked(false);
         } else {
@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onLocationPermissionClicked(View view) {
-        ActivityCompat.requestPermissions(MainActivity.this,
+        ActivityCompat.requestPermissions(MainActivity2.this,
                 new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                 PERMISSIONS_REQUEST_FINE_LOCATION);
     }
